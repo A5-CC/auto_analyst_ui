@@ -21,17 +21,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v3
+      - uses: pnpm/action-setup@v3
         with:
-          node-version: 20
-          cache: "npm"
+          version: 9
 
-      - run: npm ci
-      - run: npm run build && npx next export     # generates ./out
-      - run: echo > out/.nojekyll                 # for _next/
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run build && npx next export
+      - run: echo > out/.nojekyll
 
       - uses: actions/upload-pages-artifact@v3
-        with: { path: ./out }                     # uploads exported folder
+        with: { path: out }
 
   deploy:
     needs: build
