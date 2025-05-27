@@ -2,7 +2,7 @@
 module.exports = {
   output: "export",
   trailingSlash: true,
-  basePath: "/auto_report_analyst_ui",
-  assetPrefix: "/auto_report_analyst_ui",
+  basePath: "/auto_analyst_ui",
+  assetPrefix: "/auto_analyst_ui",
   images: { unoptimized: true }
 };
