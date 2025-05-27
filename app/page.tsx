@@ -1,7 +1,5 @@
 import Image from "next/image";
-import { prefix } from "@/lib/prefix";
-
-export const withPrefix = (p: string) => `${prefix}${p}`;
+import { withPrefix } from "@/lib/prefix";
 
 export default function Home() {
   return (
