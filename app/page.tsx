@@ -1,6 +1,6 @@
 import Image from "next/image";
+import { prefix } from "@/lib/prefix";
 
-export const prefix = process.env.NEXT_PUBLIC_BASE_PATH || "";
 export const withPrefix = (p: string) => `${prefix}${p}`;
 
 export default function Home() {
