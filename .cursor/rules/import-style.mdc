@@ -1,0 +1,28 @@
+---
+description:
+globs:
+alwaysApply: true
+---
+Always use "@" alias imports when importing from the components directory or other configured path aliases.
+
+Rules:
+1) Use "@/components/..." instead of relative paths like "./components/..." or "../components/..."
+2) Use "@/lib/..." instead of relative paths to lib directory
+3) Use "@/utils/..." instead of relative paths to utils directory
+4) Only use relative imports for files within the same immediate directory (e.g., "./types" from within the same folder)
+5) This makes imports cleaner, more consistent, and easier to refactor
+
+Examples:
+✅ Good:
+```tsx
+import { Button } from "@/components/ui/button"
+import { DashboardHeader } from "@/components/analytics/dashboard-header"
+import { cn } from "@/lib/utils"
+```
+
+❌ Bad:
+```tsx
+import { Button } from "../ui/button"
+import { DashboardHeader } from "./analytics/dashboard-header"
+import { cn } from "../../lib/utils"
+```
