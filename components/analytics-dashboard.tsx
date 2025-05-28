@@ -227,7 +227,9 @@ export default function AnalyticsDashboard() {
                                   <span className="text-[0.70rem] uppercase text-muted-foreground">
                                     Economic Occupancy
                                   </span>
-                                  <span className="font-bold text-foreground">{payload[0].value.toFixed(1)}%</span>
+                                  <span className="font-bold text-foreground">
+                                    {typeof payload[0]?.value === 'number' ? payload[0].value.toFixed(1) : payload[0]?.value}%
+                                  </span>
                                 </div>
                               </div>
                             </div>
@@ -243,7 +245,7 @@ export default function AnalyticsDashboard() {
                       barSize={24}
                       label={{
                         position: "right",
-                        formatter: (value) => `${value.toFixed(1)}%`,
+                        formatter: (value: number) => `${value.toFixed(1)}%`,
                         fill: "var(--foreground)",
                         fontSize: 12,
                       }}
