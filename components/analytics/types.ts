@@ -57,3 +57,5 @@ export interface DashboardData {
   key_chart: KeyChart
   insights: Insights
 }
+
+export type AppMode = 'idle' | 'uploading' | 'processing' | 'done' | 'error'
