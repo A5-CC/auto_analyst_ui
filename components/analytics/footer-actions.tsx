@@ -160,9 +160,9 @@ export function Footer({ dashboardData, history = [], onHistorySelect, mode }: F
 
                   {showHistory && (
                     <div className="max-h-32 overflow-y-auto space-y-1 border rounded-md p-2 bg-gray-50">
-                      {history.slice(0, 5).map((doc) => (
+                      {history.slice(0, 5).map((doc, index) => (
                         <button
-                          key={doc.id}
+                          key={`${doc.id}-${index}`}
                           onClick={() => {
                             onHistorySelect?.(doc.id)
                             setShowHistory(false)

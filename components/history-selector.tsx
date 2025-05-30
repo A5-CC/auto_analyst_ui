@@ -48,9 +48,9 @@ export function HistorySelector({ history, onSelect, isLoading, mode = 'default'
 
           {isOpen && (
             <div className="absolute top-full left-0 right-0 z-10 mt-1 bg-white border rounded-md shadow-lg max-h-60 overflow-auto">
-              {history.map((doc) => (
+              {history.map((doc, index) => (
                 <button
-                  key={doc.id}
+                  key={`${doc.id}-${index}`}
                   onClick={() => {
                     onSelect(doc.id)
                     setIsOpen(false)
