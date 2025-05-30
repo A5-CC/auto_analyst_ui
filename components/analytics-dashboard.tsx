@@ -5,7 +5,7 @@ import { DashboardHeader } from "@/components/analytics/dashboard-header"
 import { ExecutiveFlash } from "@/components/analytics/executive-flash"
 import { KPIGrid } from "@/components/analytics/kpi-grid"
 import { InsightsSection } from "@/components/analytics/insights-section"
-import { FooterActions } from "@/components/analytics/footer-actions"
+import { Footer } from "@/components/analytics/footer-actions"
 import { UploadForm } from "@/components/upload-form"
 import { ProcessingBanner } from "@/components/processing-banner"
 import { HistorySelector } from "@/components/history-selector"
@@ -107,7 +107,6 @@ export default function AnalyticsDashboard({
             <KPIGrid kpis={summary.kpis} />
             <GenericBarChart data={chartData} />
             <InsightsSection insights={summary.expert_insights} kpis={summary.kpis} />
-            <FooterActions />
           </div>
         )
 
@@ -193,10 +192,19 @@ export default function AnalyticsDashboard({
 
   return (
     <TooltipProvider>
-      <div className="min-h-screen bg-gray-50 p-6">
-        <div className="max-w-7xl mx-auto">
-          {renderContent()}
+      <div className="min-h-screen bg-gray-50">
+        <div className="p-6">
+          <div className="max-w-7xl mx-auto">
+            {renderContent()}
+          </div>
         </div>
+        {mode === 'done' && summary && (
+          <Footer
+            dashboardData={summary}
+            history={history}
+            onHistorySelect={onHistorySelect}
+          />
+        )}
       </div>
     </TooltipProvider>
   )
