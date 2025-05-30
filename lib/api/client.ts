@@ -68,7 +68,7 @@ export async function getSystemHealth(): Promise<{ status: string; timestamp: st
       status: rootData.status || 'unknown',
       timestamp: new Date().toISOString()
     }
-  } catch (error) {
+  } catch {
     return { status: 'offline', timestamp: new Date().toISOString() }
   }
 }
@@ -77,7 +77,7 @@ export async function getVersionInfo(): Promise<{ version: string; release_date:
   try {
     const response = await fetchWithError(`${API_BASE_URL}/version`)
     return response.json()
-  } catch (error) {
+  } catch {
     return null
   }
 }

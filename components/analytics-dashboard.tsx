@@ -11,9 +11,9 @@ import { ProcessingBanner } from "@/components/processing-banner"
 import { HistorySelector } from "@/components/history-selector"
 import { DashboardData } from "@/components/analytics/types"
 import { AppMode, DocMeta } from "@/lib/api/types"
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { AlertTriangle, RefreshCw, Upload } from "lucide-react"
+import { RefreshCw, Upload } from "lucide-react"
 import { GenericBarChart } from "@/components/analytics/generic-bar-chart"
 
 interface AnalyticsDashboardProps {
@@ -21,7 +21,6 @@ interface AnalyticsDashboardProps {
   summary: DashboardData | null
   history: DocMeta[]
   currentFileName: string
-  error: string | null
   onUpload: (file: File) => Promise<void>
   onHistorySelect: (docId: string) => Promise<void>
   onCancel: () => void
@@ -33,7 +32,6 @@ export default function AnalyticsDashboard({
   summary,
   history,
   currentFileName,
-  error,
   onUpload,
   onHistorySelect,
   onCancel,

@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { TrendingUp, AlertTriangle, Lightbulb, Target, Clock } from "lucide-react"
 import type { Insights, KPI } from "./types"
+import { ComponentType } from "react"
 
 interface InsightsSectionProps {
   insights?: Insights
@@ -50,7 +51,7 @@ function OpportunityRiskCard({
 }: {
   type: string
   items: Array<{ content: string; kpi_ref: string | null }>
-  icon: any
+  icon: ComponentType<{ className?: string }>
   kpis?: KPI[]
   colorScheme: {
     border: string

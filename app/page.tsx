@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import AnalyticsDashboard from "@/components/analytics-dashboard"
 import { DashboardData } from "@/components/analytics/types"
 import { AppMode, DocMeta } from "@/lib/api/types"
-import { uploadFile, checkJobStatus, getDocumentList, getSummaryById, ApiError } from "@/lib/api/client"
+import { uploadFile, checkJobStatus, getDocumentList, getSummaryById } from "@/lib/api/client"
 
 // Constants for timeout handling
 const POLL_INTERVAL_MS = 2000
@@ -17,7 +17,6 @@ export default function Page() {
   const [summary, setSummary] = useState<DashboardData | null>(null)
   const [history, setHistory] = useState<DocMeta[]>([])
   const [currentFileName, setCurrentFileName] = useState<string>('')
-  const [error, setError] = useState<string | null>(null)
 
   // Load history on mount
   useEffect(() => {
@@ -55,7 +54,6 @@ export default function Page() {
         } else if (status.status === 'error') {
           const errorMessage = status.error_message || status.error || 'Unknown processing error'
           console.error(`Processing failed:`, errorMessage)
-          setError(`Processing failed: ${errorMessage}`)
           setMode('error')
         }
       } catch (err) {
@@ -84,7 +82,6 @@ export default function Page() {
   }
 
   const handleUpload = async (file: File) => {
-    setError(null)
     setMode('uploading')
     setCurrentFileName(file.name)
 
@@ -94,17 +91,11 @@ export default function Page() {
       setMode('processing')
     } catch (err) {
       console.error('Upload failed:', err)
-      if (err instanceof ApiError) {
-        setError(`Upload failed: ${err.message}`)
-      } else {
-        setError('Upload failed - please try again')
-      }
       setMode('error')
     }
   }
 
   const handleHistorySelect = async (docId: string) => {
-    setError(null)
     setMode('uploading') // Show loading state
 
     try {
@@ -113,11 +104,6 @@ export default function Page() {
       setMode('done')
     } catch (err) {
       console.error('Failed to load summary:', err)
-      if (err instanceof ApiError) {
-        setError(`Failed to load document: ${err.message}`)
-      } else {
-        setError('Failed to load document - please try again')
-      }
       setMode('error')
     }
   }
@@ -126,7 +112,6 @@ export default function Page() {
     setMode('idle')
     setJobId(null)
     setCurrentFileName('')
-    setError(null)
   }
 
   const handleReset = () => {
@@ -134,7 +119,6 @@ export default function Page() {
     setJobId(null)
     setSummary(null)
     setCurrentFileName('')
-    setError(null)
   }
 
   return (
@@ -143,7 +127,6 @@ export default function Page() {
       summary={summary}
       history={history}
       currentFileName={currentFileName}
-      error={error}
       onUpload={handleUpload}
       onHistorySelect={handleHistorySelect}
       onCancel={handleCancel}
