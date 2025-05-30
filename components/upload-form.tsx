@@ -145,7 +145,7 @@ export function UploadForm({ onUpload, isUploading }: UploadFormProps) {
       </div>
 
       {/* Upload Card */}
-      <Card className="border transition-all duration-300 animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-300 shadow-sm">
+      <Card className="border transition-all duration-300 animate-in fade-in slide-in-from-bottom-4 delay-300 shadow-sm">
         <CardHeader className="text-center pb-4">
           <CardTitle className="flex items-center justify-center gap-2 text-lg font-medium">
             <FileText className="h-4 w-4 text-gray-600" />
