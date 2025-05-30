@@ -4,7 +4,6 @@ import { TooltipProvider } from "@/components/ui/tooltip"
 import { DashboardHeader } from "@/components/analytics/dashboard-header"
 import { ExecutiveFlash } from "@/components/analytics/executive-flash"
 import { KPIGrid } from "@/components/analytics/kpi-grid"
-import { EconomicOccupancyChart } from "@/components/analytics/economic-occupancy-chart"
 import { InsightsSection } from "@/components/analytics/insights-section"
 import { FooterActions } from "@/components/analytics/footer-actions"
 import { UploadForm } from "@/components/upload-form"
@@ -15,6 +14,7 @@ import { AppMode, DocMeta } from "@/lib/api/types"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { AlertTriangle, RefreshCw, Upload } from "lucide-react"
+import { GenericBarChart } from "@/components/analytics/generic-bar-chart"
 
 interface AnalyticsDashboardProps {
   mode: AppMode
@@ -95,8 +95,8 @@ export default function AnalyticsDashboard({
         const chartData = summary.chart_spec ? {
           title: summary.chart_spec.chart_js_object.title,
           data: summary.chart_spec.chart_js_object.datasets[0]?.data.map((value, index) => ({
-            facility: summary.chart_spec!.chart_js_object.labels[index] || `Item ${index + 1}`,
-            occupancy: value
+            label: summary.chart_spec!.chart_js_object.labels[index] || `Item ${index + 1}`,
+            value: value
           })) || []
         } : undefined
 
@@ -105,7 +105,7 @@ export default function AnalyticsDashboard({
             <DashboardHeader title={summary.filename || "Analysis Results"} onReset={onReset} />
             <ExecutiveFlash data={summary.exec_flash} />
             <KPIGrid kpis={summary.kpis} />
-            <EconomicOccupancyChart data={chartData} />
+            <GenericBarChart data={chartData} />
             <InsightsSection insights={summary.expert_insights} />
             <FooterActions />
           </div>
