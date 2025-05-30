@@ -53,7 +53,9 @@ export default function Page() {
           setMode('done')
           loadHistory()
         } else if (status.status === 'error') {
-          console.error(`Processing failed:`, status.error || 'Unknown error')
+          const errorMessage = status.error_message || status.error || 'Unknown processing error'
+          console.error(`Processing failed:`, errorMessage)
+          setError(`Processing failed: ${errorMessage}`)
           setMode('error')
         }
       } catch (err) {

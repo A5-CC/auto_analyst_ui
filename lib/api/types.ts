@@ -10,6 +10,7 @@ export interface JobStatus {
   status: 'processing' | 'done' | 'error'
   summary_url?: string
   error?: string
+  error_message?: string
 }
 
 export interface DocMeta {

@@ -24,7 +24,7 @@ export function DashboardHeader({ title, onReset }: DashboardHeaderProps) {
         {onReset && (
           <Button variant="outline" onClick={onReset}>
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Upload New File
+            Go to Main Page
           </Button>
         )}
       </div>
