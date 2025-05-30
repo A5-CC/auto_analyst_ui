@@ -30,8 +30,7 @@ export interface ExecFlash {
 }
 
 export interface ChartDataPoint {
-  facility: string
-  occupancy: number
+  [key: string]: string | number
 }
 
 export interface KeyChart {
