@@ -13,7 +13,7 @@ export function DashboardHeader({ title, onReset }: DashboardHeaderProps) {
         <div>
           <h1 className="text-2xl font-bold text-gray-900 mb-2">{title}</h1>
           <p className="text-sm text-gray-500">
-            Generated on{" "}
+            Analytics Dashboard generated on{" "}
             {new Date().toLocaleDateString("en-US", {
               year: "numeric",
               month: "long",

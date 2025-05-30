@@ -10,7 +10,6 @@ import { FooterActions } from "@/components/analytics/footer-actions"
 import { UploadForm } from "@/components/upload-form"
 import { ProcessingBanner } from "@/components/processing-banner"
 import { HistorySelector } from "@/components/history-selector"
-import { dashboardData } from "@/components/analytics/sample-data"
 import { DashboardData } from "@/components/analytics/types"
 import { AppMode, DocMeta } from "@/lib/api/types"
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
@@ -68,27 +67,46 @@ export default function AnalyticsDashboard({
 
       case 'done':
         if (!summary) {
-          // Fallback to sample data if no summary loaded
-          const data = dashboardData
           return (
             <div className="space-y-6">
-              <DashboardHeader title={data.document_title} onReset={onReset} />
-              <ExecutiveFlash data={data.exec_flash} />
-              <KPIGrid kpis={data.kpis} />
-              <EconomicOccupancyChart data={data.key_chart} />
-              <InsightsSection insights={data.insights} />
-              <FooterActions />
+              <Card className="w-full max-w-2xl mx-auto border bg-white">
+                <CardContent className="py-6">
+                  <div className="flex flex-col items-center space-y-4">
+                    <h3 className="text-lg font-medium text-gray-700">No Data Available</h3>
+                    <div className="text-gray-600 text-center">
+                      No analysis data was found. Please try uploading a file again.
+                    </div>
+                    <Button
+                      variant="outline"
+                      onClick={onReset}
+                      className="text-gray-600 hover:text-gray-800"
+                    >
+                      <Upload className="h-4 w-4 mr-2" />
+                      Upload New File
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
             </div>
           )
         }
 
+        // Convert chart_spec to key_chart format
+        const chartData = summary.chart_spec ? {
+          title: summary.chart_spec.chart_js_object.title,
+          data: summary.chart_spec.chart_js_object.datasets[0]?.data.map((value, index) => ({
+            facility: summary.chart_spec!.chart_js_object.labels[index] || `Item ${index + 1}`,
+            occupancy: value
+          })) || []
+        } : undefined
+
         return (
           <div className="space-y-6">
-            <DashboardHeader title={summary.document_title} onReset={onReset} />
+            <DashboardHeader title={summary.filename || "Analysis Results"} onReset={onReset} />
             <ExecutiveFlash data={summary.exec_flash} />
             <KPIGrid kpis={summary.kpis} />
-            <EconomicOccupancyChart data={summary.key_chart} />
-            <InsightsSection insights={summary.insights} />
+            <EconomicOccupancyChart data={chartData} />
+            <InsightsSection insights={summary.expert_insights} />
             <FooterActions />
           </div>
         )
