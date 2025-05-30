@@ -5,7 +5,7 @@ export interface KPITooltip {
 
 export interface KPIDelta {
   value: string
-  direction: "up" | "down"
+  direction: "up" | "down" | "flat"
   label: string
 }
 
@@ -25,6 +25,7 @@ export interface KPI {
 
 export interface ExecFlash {
   title: string
+  date?: string
   summary: string
 }
 
@@ -38,24 +39,52 @@ export interface KeyChart {
   data: ChartDataPoint[]
 }
 
+export interface ChartSpec {
+  explanation: string
+  chart_js_object: {
+    title: string
+    type: string
+    orientation?: string
+    labels: string[]
+    datasets: Array<{
+      label: string
+      data: number[]
+    }>
+  }
+}
+
+export interface OpportunityItem {
+  content: string
+  kpi_ref: string | null
+}
+
+export interface RiskItem {
+  content: string
+  kpi_ref: string | null
+}
+
 export interface Action {
-  text: string
-  kpi_ref: string
+  content: string
+  kpi_ref: string | null
 }
 
 export interface Insights {
   headline: string
-  opportunities: string[]
-  risks: string[]
+  opportunities: OpportunityItem[]
+  risks: RiskItem[]
   actions: Action[]
 }
 
+// Backend response structure
 export interface DashboardData {
-  document_title: string
+  doc_id: string
+  job_id: string
+  filename: string
+  processed_at: string
   exec_flash: ExecFlash
   kpis: KPI[]
-  key_chart: KeyChart
-  insights: Insights
+  chart_spec: ChartSpec
+  expert_insights: Insights
 }
 
-export type AppMode = 'idle' | 'uploading' | 'processing' | 'done' | 'error'
+export type AppMode = 'idle' | 'uploading' | 'processing' | 'done' | 'error' | 'timeout'
