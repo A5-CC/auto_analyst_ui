@@ -106,7 +106,7 @@ export default function AnalyticsDashboard({
             <ExecutiveFlash data={summary.exec_flash} />
             <KPIGrid kpis={summary.kpis} />
             <GenericBarChart data={chartData} />
-            <InsightsSection insights={summary.expert_insights} />
+            <InsightsSection insights={summary.expert_insights} kpis={summary.kpis} />
             <FooterActions />
           </div>
         )
