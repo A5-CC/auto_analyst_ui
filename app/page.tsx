@@ -4,7 +4,12 @@ import { useState, useEffect } from "react"
 import AnalyticsDashboard from "@/components/analytics-dashboard"
 import { DashboardData } from "@/components/analytics/types"
 import { AppMode, DocMeta } from "@/lib/api/types"
-import { uploadFile, checkJobStatus, getDocumentList, getSummary, getSummaryById, ApiError } from "@/lib/api/client"
+import { uploadFile, checkJobStatus, getDocumentList, getSummaryById, ApiError } from "@/lib/api/client"
+
+// Constants for timeout handling
+const POLL_INTERVAL_MS = 2000
+const MAX_POLL_TIME_MINUTES = 2
+const MAX_POLL_ATTEMPTS = (MAX_POLL_TIME_MINUTES * 60 * 1000) / POLL_INTERVAL_MS
 
 export default function Page() {
   const [mode, setMode] = useState<AppMode>('idle')
@@ -23,46 +28,47 @@ export default function Page() {
   useEffect(() => {
     if (mode !== 'processing' || !jobId) return
 
-    let timeoutCount = 0
-    const maxTimeouts = 60 // 2 minutes at 2s intervals
+    console.log(`Starting analysis polling for ${currentFileName}`)
+    let currentAttempt = 0
 
     const poll = async () => {
-      try {
-        const status = await checkJobStatus(jobId)
+      currentAttempt++
 
-        if (status.state === 'done' && status.url) {
-          const summaryData = await getSummary(status.url)
+      // Check for timeout first
+      if (currentAttempt >= MAX_POLL_ATTEMPTS) {
+        console.log(`Polling timeout reached after ${currentAttempt} attempts (${MAX_POLL_TIME_MINUTES} minutes)`)
+        setMode('timeout')
+        return
+      }
+
+      try {
+        console.log(`Polling attempt ${currentAttempt}/${MAX_POLL_ATTEMPTS}`)
+        const status = await checkJobStatus(jobId)
+        console.log(`Status received:`, status)
+
+        if (status.status === 'done' && status.doc_id) {
+          console.log(`Analysis complete, fetching summary for doc_id: ${status.doc_id}`)
+          const summaryData = await getSummaryById(status.doc_id)
           setSummary(summaryData)
           setMode('done')
-          clearInterval(interval)
-          // Refresh history to include new document
           loadHistory()
-        } else if (status.state === 'error') {
-          setError(status.error || 'Processing failed')
+        } else if (status.status === 'error') {
+          console.error(`Processing failed:`, status.error || 'Unknown error')
           setMode('error')
-          clearInterval(interval)
         }
-        // Continue polling if still processing
       } catch (err) {
-        console.error('Polling error:', err)
-        timeoutCount++
-
-        if (timeoutCount >= maxTimeouts) {
-          setError('Processing timeout - please try again')
-          setMode('error')
-          clearInterval(interval)
-        }
+        console.error(`Polling error on attempt ${currentAttempt}:`, err)
+        // Don't set error state here, let the timeout handle it if it persists
       }
     }
 
-    // Start polling every 2 seconds
-    const interval = setInterval(poll, 2000)
+    const interval = setInterval(poll, POLL_INTERVAL_MS)
+    poll() // Initial poll
 
-    // Initial poll
-    poll()
-
-    return () => clearInterval(interval)
-  }, [mode, jobId])
+    return () => {
+      clearInterval(interval)
+    }
+  }, [mode, jobId, currentFileName])
 
   const loadHistory = async () => {
     try {

@@ -10,9 +10,10 @@ interface HistorySelectorProps {
   history: DocMeta[]
   onSelect: (docId: string) => void
   isLoading: boolean
+  mode?: 'default' | 'timeout'
 }
 
-export function HistorySelector({ history, onSelect, isLoading }: HistorySelectorProps) {
+export function HistorySelector({ history, onSelect, isLoading, mode = 'default' }: HistorySelectorProps) {
   const [isOpen, setIsOpen] = useState(false)
 
   if (history.length === 0) {
@@ -24,10 +25,13 @@ export function HistorySelector({ history, onSelect, isLoading }: HistorySelecto
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <History className="h-5 w-5" />
-          Previous Analytics
+          {mode === 'timeout' ? 'Check Results Later' : 'Previous Analytics'}
         </CardTitle>
         <CardDescription>
-          View insights from previously uploaded files
+          {mode === 'timeout'
+            ? 'Your analysis will appear here once completed'
+            : 'View insights from previously uploaded files'
+          }
         </CardDescription>
       </CardHeader>
       <CardContent>

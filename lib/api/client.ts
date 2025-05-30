@@ -34,18 +34,15 @@ export async function uploadFile(file: File): Promise<UploadResponse> {
 }
 
 export async function checkJobStatus(jobId: string): Promise<JobStatus> {
-  const response = await fetchWithError(`${API_BASE_URL}/status/${jobId}`)
+  const response = await fetchWithError(`${API_BASE_URL}/job-status/${jobId}`)
   return response.json()
 }
 
 export async function getDocumentList(): Promise<DocMeta[]> {
-  const response = await fetchWithError(`${API_BASE_URL}/list`)
-  return response.json()
-}
-
-export async function getSummary(url: string): Promise<DashboardData> {
-  const response = await fetchWithError(url)
-  return response.json()
+  const response = await fetchWithError(`${API_BASE_URL}/list-jobs`)
+  const data = await response.json()
+  // El backend devuelve { documents: DocMeta[] }, extraemos solo el array
+  return data.documents || data
 }
 
 export async function getSummaryById(docId: string): Promise<DashboardData> {

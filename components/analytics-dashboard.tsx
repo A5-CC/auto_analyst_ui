@@ -13,6 +13,9 @@ import { HistorySelector } from "@/components/history-selector"
 import { dashboardData } from "@/components/analytics/sample-data"
 import { DashboardData } from "@/components/analytics/types"
 import { AppMode, DocMeta } from "@/lib/api/types"
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { AlertTriangle, RefreshCw, Upload } from "lucide-react"
 
 interface AnalyticsDashboardProps {
   mode: AppMode
@@ -93,22 +96,75 @@ export default function AnalyticsDashboard({
       case 'error':
         return (
           <div className="space-y-6">
-            <div className="text-center py-8">
-              <div className="text-red-600 mb-4">
-                {error || 'An error occurred'}
-              </div>
-              <button
-                onClick={onReset}
-                className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-              >
-                Try Again
-              </button>
+            <Card className="w-full max-w-2xl mx-auto border bg-white">
+              <CardContent className="py-6">
+                <div className="flex flex-col items-center space-y-4">
+                  <h3 className="text-lg font-medium text-gray-700">Processing Issue</h3>
+                  <div className="text-gray-600 text-center">
+                    An error occurred while processing your file. Please try again.
+                  </div>
+                  <Button
+                    variant="outline"
+                    onClick={onReset}
+                    className="text-gray-600 hover:text-gray-800"
+                  >
+                    <Upload className="h-4 w-4 mr-2" />
+                    Upload New File
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+
+            <div className="opacity-80">
+              <HistorySelector
+                history={history}
+                onSelect={onHistorySelect}
+                isLoading={false}
+              />
             </div>
-            <HistorySelector
-              history={history}
-              onSelect={onHistorySelect}
-              isLoading={false}
-            />
+          </div>
+        )
+
+      case 'timeout':
+        return (
+          <div className="space-y-6">
+            <Card className="w-full max-w-2xl mx-auto border bg-white">
+              <CardContent className="py-6">
+                <div className="flex flex-col items-center space-y-4">
+                  <h3 className="text-lg font-medium text-gray-700">Analysis Taking Too Long</h3>
+                  <div className="text-gray-600 text-center">
+                    The analysis is taking longer than expected. Please try again or upload a smaller file.
+                  </div>
+                  <div className="flex gap-3">
+                    <Button
+                      variant="outline"
+                      onClick={onReset}
+                      className="text-gray-600 hover:text-gray-800"
+                    >
+                      <RefreshCw className="h-4 w-4 mr-2" />
+                      Try Again
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={onReset}
+                      className="text-gray-600 hover:text-gray-800"
+                    >
+                      <Upload className="h-4 w-4 mr-2" />
+                      Upload New File
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <div className="opacity-80">
+              <HistorySelector
+                history={history}
+                onSelect={onHistorySelect}
+                isLoading={false}
+                mode="timeout"
+              />
+            </div>
           </div>
         )
 

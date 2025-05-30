@@ -17,8 +17,6 @@ import {
   X,
   BarChart3,
   TrendingUp,
-  LineChart,
-  PieChart,
   Database,
   Brain
 } from "lucide-react"
