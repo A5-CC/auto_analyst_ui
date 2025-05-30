@@ -198,13 +198,12 @@ export default function AnalyticsDashboard({
             {renderContent()}
           </div>
         </div>
-        {mode === 'done' && summary && (
-          <Footer
-            dashboardData={summary}
-            history={history}
-            onHistorySelect={onHistorySelect}
-          />
-        )}
+        <Footer
+          dashboardData={summary}
+          history={history}
+          onHistorySelect={onHistorySelect}
+          mode={mode}
+        />
       </div>
     </TooltipProvider>
   )

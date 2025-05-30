@@ -16,14 +16,16 @@ import {
 import { getSystemHealth, getVersionInfo } from "@/lib/api/client"
 import { DashboardData } from "./types"
 import { DocMeta } from "@/lib/api/types"
+import { AppMode } from "@/lib/api/types"
 
 interface FooterProps {
   dashboardData?: DashboardData | null
   history?: DocMeta[]
   onHistorySelect?: (docId: string) => void
+  mode?: AppMode
 }
 
-export function Footer({ dashboardData, history = [], onHistorySelect }: FooterProps) {
+export function Footer({ dashboardData, history = [], onHistorySelect, mode }: FooterProps) {
   const [systemStatus, setSystemStatus] = useState<'checking' | 'operational' | 'offline'>('checking')
   const [showHistory, setShowHistory] = useState(false)
   const [lastChecked, setLastChecked] = useState<Date | null>(null)
@@ -90,18 +92,31 @@ export function Footer({ dashboardData, history = [], onHistorySelect }: FooterP
     }
   }
 
+  // Determine if we should show the history navigation section
+  // Hide it when HistorySelector is visible (idle, error, timeout modes)
+  const shouldShowHistoryNav = mode === 'done' || mode === 'uploading' || mode === 'processing'
+
+  // Determine if we should show document info section
+  const shouldShowDocumentInfo = !!dashboardData
+
+  // Calculate grid columns based on what sections we're showing
+  const getGridCols = () => {
+    const sections = [shouldShowDocumentInfo, shouldShowHistoryNav, true].filter(Boolean).length // true = always show system status
+    return sections === 1 ? 'grid-cols-1' : sections === 2 ? 'grid-cols-1 lg:grid-cols-2' : 'grid-cols-1 lg:grid-cols-3'
+  }
+
   return (
     <footer className="mt-12 border-t bg-white">
       <div className="max-w-7xl mx-auto px-6 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className={`grid gap-8 ${getGridCols()}`}>
 
-          {/* Document Info */}
-          <div className="space-y-4">
-            <h4 className="text-sm font-semibold text-gray-900 flex items-center gap-2">
-              <FileText className="h-4 w-4" />
-              Document Information
-            </h4>
-            {dashboardData ? (
+          {/* Document Info - Only show when there's actual document data */}
+          {shouldShowDocumentInfo && (
+            <div className="space-y-4">
+              <h4 className="text-sm font-semibold text-gray-900 flex items-center gap-2">
+                <FileText className="h-4 w-4" />
+                Document Information
+              </h4>
               <div className="space-y-2 text-xs text-gray-600">
                 <div className="flex justify-between">
                   <span>File:</span>
@@ -120,57 +135,57 @@ export function Footer({ dashboardData, history = [], onHistorySelect }: FooterP
                   <span className="font-mono text-xs">{dashboardData.doc_id.substring(0, 8)}...</span>
                 </div>
               </div>
-            ) : (
-              <p className="text-xs text-gray-500">No document loaded</p>
-            )}
-          </div>
+            </div>
+          )}
 
-          {/* Navigation & History */}
-          <div className="space-y-4">
-            <h4 className="text-sm font-semibold text-gray-900 flex items-center gap-2">
-              <History className="h-4 w-4" />
-              Report Navigation
-            </h4>
+          {/* Navigation & History - Only show when HistorySelector is not visible */}
+          {shouldShowHistoryNav && (
+            <div className="space-y-4">
+              <h4 className="text-sm font-semibold text-gray-900 flex items-center gap-2">
+                <History className="h-4 w-4" />
+                Report Navigation
+              </h4>
 
-            {history.length > 0 ? (
-              <div className="space-y-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setShowHistory(!showHistory)}
-                  className="w-full justify-between text-xs"
-                >
-                  <span>Browse {history.length} previous reports</span>
-                  {showHistory ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
-                </Button>
+              {history.length > 0 ? (
+                <div className="space-y-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setShowHistory(!showHistory)}
+                    className="w-full justify-between text-xs"
+                  >
+                    <span>Browse {history.length} previous reports</span>
+                    {showHistory ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
+                  </Button>
 
-                {showHistory && (
-                  <div className="max-h-32 overflow-y-auto space-y-1 border rounded-md p-2 bg-gray-50">
-                    {history.slice(0, 5).map((doc) => (
-                      <button
-                        key={doc.id}
-                        onClick={() => {
-                          onHistorySelect?.(doc.id)
-                          setShowHistory(false)
-                        }}
-                        className="w-full text-left px-2 py-1 text-xs hover:bg-white rounded border border-transparent hover:border-gray-200 transition-colors"
-                      >
-                        <div className="font-medium truncate">{doc.title}</div>
-                        <div className="text-gray-500">{formatDate(doc.created_at)}</div>
-                      </button>
-                    ))}
-                    {history.length > 5 && (
-                      <div className="text-center py-1 text-xs text-gray-500">
-                        +{history.length - 5} more reports
-                      </div>
-                    )}
-                  </div>
-                )}
-              </div>
-            ) : (
-              <p className="text-xs text-gray-500">No previous reports available</p>
-            )}
-          </div>
+                  {showHistory && (
+                    <div className="max-h-32 overflow-y-auto space-y-1 border rounded-md p-2 bg-gray-50">
+                      {history.slice(0, 5).map((doc) => (
+                        <button
+                          key={doc.id}
+                          onClick={() => {
+                            onHistorySelect?.(doc.id)
+                            setShowHistory(false)
+                          }}
+                          className="w-full text-left px-2 py-1 text-xs hover:bg-white rounded border border-transparent hover:border-gray-200 transition-colors"
+                        >
+                          <div className="font-medium truncate">{doc.title}</div>
+                          <div className="text-gray-500">{formatDate(doc.created_at)}</div>
+                        </button>
+                      ))}
+                      {history.length > 5 && (
+                        <div className="text-center py-1 text-xs text-gray-500">
+                          +{history.length - 5} more reports
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <p className="text-xs text-gray-500">No previous reports available</p>
+              )}
+            </div>
+          )}
 
           {/* System Status & About */}
           <div className="space-y-4">
