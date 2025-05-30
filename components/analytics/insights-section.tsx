@@ -4,10 +4,14 @@ import { TrendingUp, AlertTriangle, CheckCircle2, ArrowRight } from "lucide-reac
 import type { Insights } from "./types"
 
 interface InsightsSectionProps {
-  insights: Insights
+  insights?: Insights
 }
 
 export function InsightsSection({ insights }: InsightsSectionProps) {
+  if (!insights) {
+    return null
+  }
+
   return (
     <div className="space-y-6">
       {/* Headline Insight */}
@@ -32,11 +36,20 @@ export function InsightsSection({ insights }: InsightsSectionProps) {
           <CardContent>
             <div className="space-y-4">
               {insights.opportunities.map((opportunity, index) => (
-                <div key={index} className="flex gap-3">
-                  <div className="flex-shrink-0 w-6 h-6 bg-green-100 rounded-full flex items-center justify-center mt-0.5">
-                    <span className="text-xs font-medium text-green-700">{index + 1}</span>
+                <div key={index} className="space-y-2">
+                  <div className="flex gap-3">
+                    <div className="flex-shrink-0 w-6 h-6 bg-green-100 rounded-full flex items-center justify-center mt-0.5">
+                      <span className="text-xs font-medium text-green-700">{index + 1}</span>
+                    </div>
+                    <p className="text-sm text-gray-700 leading-relaxed">{opportunity.content}</p>
                   </div>
-                  <p className="text-sm text-gray-700 leading-relaxed">{opportunity}</p>
+                  {opportunity.kpi_ref && (
+                    <div className="ml-9">
+                      <Badge variant="outline" className="text-xs">
+                        Impacts: {opportunity.kpi_ref.replace("_", " ")}
+                      </Badge>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
@@ -54,11 +67,20 @@ export function InsightsSection({ insights }: InsightsSectionProps) {
           <CardContent>
             <div className="space-y-4">
               {insights.risks.map((risk, index) => (
-                <div key={index} className="flex gap-3">
-                  <div className="flex-shrink-0 w-6 h-6 bg-red-100 rounded-full flex items-center justify-center mt-0.5">
-                    <AlertTriangle className="h-3 w-3 text-red-700" />
+                <div key={index} className="space-y-2">
+                  <div className="flex gap-3">
+                    <div className="flex-shrink-0 w-6 h-6 bg-red-100 rounded-full flex items-center justify-center mt-0.5">
+                      <AlertTriangle className="h-3 w-3 text-red-700" />
+                    </div>
+                    <p className="text-sm text-gray-700 leading-relaxed">{risk.content}</p>
                   </div>
-                  <p className="text-sm text-gray-700 leading-relaxed">{risk}</p>
+                  {risk.kpi_ref && (
+                    <div className="ml-9">
+                      <Badge variant="outline" className="text-xs">
+                        Impacts: {risk.kpi_ref.replace("_", " ")}
+                      </Badge>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
@@ -81,13 +103,15 @@ export function InsightsSection({ insights }: InsightsSectionProps) {
                     <div className="flex-shrink-0 w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center mt-0.5">
                       <ArrowRight className="h-3 w-3 text-blue-700" />
                     </div>
-                    <p className="text-sm text-gray-700 leading-relaxed">{action.text}</p>
+                    <p className="text-sm text-gray-700 leading-relaxed">{action.content}</p>
                   </div>
-                  <div className="ml-9">
-                    <Badge variant="outline" className="text-xs">
-                      Impacts: {action.kpi_ref.replace("_", " ")}
-                    </Badge>
-                  </div>
+                  {action.kpi_ref && (
+                    <div className="ml-9">
+                      <Badge variant="outline" className="text-xs">
+                        Impacts: {action.kpi_ref.replace("_", " ")}
+                      </Badge>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
