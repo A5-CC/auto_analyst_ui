@@ -62,7 +62,7 @@ function OpportunityRiskCard({
   }
 }) {
   return (
-    <Card className={`${colorScheme.border} h-fit`}>
+    <Card className={`${colorScheme.border} h-full`}>
       <CardHeader className="pb-4">
         <CardTitle className={`flex items-center gap-2 ${colorScheme.title}`}>
           <Icon className="h-5 w-5" />
@@ -77,17 +77,13 @@ function OpportunityRiskCard({
                 <div
                   className={`flex-shrink-0 w-6 h-6 ${colorScheme.bg} rounded-full flex items-center justify-center mt-0.5`}
                 >
-                  {type === "Opportunities" ? (
-                    <span className={`text-xs font-medium ${colorScheme.text}`}>{index + 1}</span>
-                  ) : (
-                    <AlertTriangle className={`h-3 w-3 ${colorScheme.text}`} />
-                  )}
+                  <span className={`text-xs font-medium ${colorScheme.text}`}>{index + 1}</span>
                 </div>
-                <p className="text-sm text-gray-700 leading-relaxed">{item.content}</p>
+                <p className="text-base text-gray-700 leading-relaxed">{item.content}</p>
               </div>
               {item.kpi_ref && (
                 <div className="ml-9">
-                  <Badge variant="outline" className="text-xs">
+                  <Badge variant="outline" className="text-sm">
                     Impacts: {getKPIName(item.kpi_ref, kpis)}
                   </Badge>
                 </div>
@@ -122,7 +118,7 @@ function ImmediateActionsCard({ actions, kpis }: { actions: Array<{ content: str
                 <span className="text-sm font-semibold text-blue-700">{index + 1}</span>
               </div>
               <div className="flex-1">
-                <p className="text-sm text-gray-800 leading-relaxed mb-2">{action.content}</p>
+                <p className="text-base text-gray-800 leading-relaxed mb-2">{action.content}</p>
                 <div className="flex items-center justify-between">
                   {action.kpi_ref && (
                     <Badge variant="secondary" className="text-xs">
@@ -159,7 +155,7 @@ export function InsightsSection({ insights, kpis = [] }: InsightsSectionProps) {
       <KeyInsightCard headline={insights.headline} />
 
       {/* Opportunities and Risks - Side by Side */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
         <OpportunityRiskCard
           type="Opportunities"
           items={insights.opportunities}

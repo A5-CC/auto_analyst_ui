@@ -101,7 +101,7 @@ export default function AnalyticsDashboard({
         return (
           <div className="space-y-6">
             <DashboardHeader title={summary.filename || "Analysis Results"} onReset={onReset} />
-            <ExecutiveFlash data={summary.exec_flash} />
+            <ExecutiveFlash data={summary.exec_flash} kpis={summary.kpis} />
             <KPIGrid kpis={summary.kpis} />
             <GenericBarChart data={chartData} />
             <InsightsSection insights={summary.expert_insights} kpis={summary.kpis} />

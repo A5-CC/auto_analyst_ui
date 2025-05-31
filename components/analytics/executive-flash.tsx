@@ -1,10 +1,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Target, Calendar } from "lucide-react"
+import { Badge } from "@/components/ui/badge"
+import { Target, Calendar, Activity } from "lucide-react"
 import ReactMarkdown from "react-markdown"
-import type { ExecFlash } from "./types"
+import type { ExecFlash, KPI } from "./types"
 
 interface ExecutiveFlashProps {
   data: ExecFlash
+  kpis?: KPI[]
 }
 
 // Format date to a more readable format
@@ -29,7 +31,7 @@ function formatDate(dateString: string): string {
   }
 }
 
-export function ExecutiveFlash({ data }: ExecutiveFlashProps) {
+export function ExecutiveFlash({ data, kpis = [] }: ExecutiveFlashProps) {
   // Transform markdown content to ensure double line breaks
   const enhancedMarkdown = data?.summary?.replace(/\n/g, '\n\n')
 
@@ -41,12 +43,20 @@ export function ExecutiveFlash({ data }: ExecutiveFlashProps) {
             <Target className="h-5 w-5 text-blue-600" />
             {data?.title || "No title"}
           </CardTitle>
-          {data?.date && (
-            <div className="flex items-center gap-1 text-xs text-muted-foreground bg-white dark:bg-slate-800 px-2 py-1 rounded-md border">
-              <Calendar className="h-3 w-3" />
-              <time dateTime={data.date}>{formatDate(data.date)}</time>
-            </div>
-          )}
+          <div className="flex items-center gap-2">
+            {kpis.length > 0 && (
+              <Badge variant="outline" className="text-xs">
+                <Activity className="h-3 w-3 mr-1" />
+                {kpis.length} KPIs analyzed
+              </Badge>
+            )}
+            {data?.date && (
+              <div className="flex items-center gap-1 text-xs text-muted-foreground bg-white dark:bg-slate-800 px-2 py-1 rounded-md border">
+                <Calendar className="h-3 w-3" />
+                <time dateTime={data.date}>{formatDate(data.date)}</time>
+              </div>
+            )}
+          </div>
         </div>
       </CardHeader>
       <CardContent className="pt-4">
