@@ -21,7 +21,7 @@ interface AnalyticsDashboardProps {
   summary: DashboardData | null
   history: DocMeta[]
   currentFileName: string
-  onUpload: (file: File) => Promise<void>
+  onUpload: (files: File[]) => Promise<void>
   onHistorySelect: (docId: string) => Promise<void>
   onCancel: () => void
   onReset: () => void
@@ -72,7 +72,7 @@ export default function AnalyticsDashboard({
                   <div className="flex flex-col items-center space-y-4">
                     <h3 className="text-lg font-medium text-gray-700">No Data Available</h3>
                     <div className="text-gray-600 text-center">
-                      No analysis data was found. Please try uploading a file again.
+                      No analysis data was found. Please try uploading files again.
                     </div>
                     <Button
                       variant="outline"
@@ -80,7 +80,7 @@ export default function AnalyticsDashboard({
                       className="text-gray-600 hover:text-gray-800"
                     >
                       <Upload className="h-4 w-4 mr-2" />
-                      Upload New File
+                      Upload New Files
                     </Button>
                   </div>
                 </CardContent>
@@ -116,7 +116,7 @@ export default function AnalyticsDashboard({
                 <div className="flex flex-col items-center space-y-4">
                   <h3 className="text-lg font-medium text-gray-700">Processing Issue</h3>
                   <div className="text-gray-600 text-center">
-                    An error occurred while processing your file. Please try again.
+                    An error occurred while processing your files. Please try again.
                   </div>
                   <Button
                     variant="outline"
@@ -124,7 +124,7 @@ export default function AnalyticsDashboard({
                     className="text-gray-600 hover:text-gray-800"
                   >
                     <Upload className="h-4 w-4 mr-2" />
-                    Upload New File
+                    Upload New Files
                   </Button>
                 </div>
               </CardContent>
@@ -148,7 +148,7 @@ export default function AnalyticsDashboard({
                 <div className="flex flex-col items-center space-y-4">
                   <h3 className="text-lg font-medium text-gray-700">Analysis Taking Too Long</h3>
                   <div className="text-gray-600 text-center">
-                    The analysis is taking longer than expected. Please try again or upload a smaller file.
+                    The analysis is taking longer than expected. Please try again or upload smaller files.
                   </div>
                   <div className="flex gap-3">
                     <Button
@@ -165,7 +165,7 @@ export default function AnalyticsDashboard({
                       className="text-gray-600 hover:text-gray-800"
                     >
                       <Upload className="h-4 w-4 mr-2" />
-                      Upload New File
+                      Upload New Files
                     </Button>
                   </div>
                 </div>

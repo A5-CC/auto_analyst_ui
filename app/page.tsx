@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import AnalyticsDashboard from "@/components/analytics-dashboard"
 import { DashboardData } from "@/components/analytics/types"
 import { AppMode, DocMeta } from "@/lib/api/types"
-import { uploadFile, checkJobStatus, getDocumentList, getSummaryById } from "@/lib/api/client"
+import { uploadFiles, checkJobStatus, getDocumentList, getSummaryById } from "@/lib/api/client"
 
 // Constants for timeout handling
 const POLL_INTERVAL_MS = 2000
@@ -81,12 +81,13 @@ export default function Page() {
     }
   }
 
-  const handleUpload = async (file: File) => {
+  const handleUpload = async (files: File[]) => {
     setMode('uploading')
-    setCurrentFileName(file.name)
+    const combinedName = files.map(f => f.name).join(' + ')
+    setCurrentFileName(combinedName)
 
     try {
-      const response = await uploadFile(file)
+      const response = await uploadFiles(files)
       setJobId(response.job_id)
       setMode('processing')
     } catch (err) {

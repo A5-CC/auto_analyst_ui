@@ -24,7 +24,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { cn } from "@/lib/utils"
 
 interface UploadFormProps {
-  onUpload: (file: File) => void
+  onUpload: (files: File[]) => void
   isUploading: boolean
 }
 
@@ -46,7 +46,7 @@ const FILE_TYPE_LABELS = {
 export function UploadForm({ onUpload, isUploading }: UploadFormProps) {
   const [error, setError] = useState<string | null>(null)
   const [dragActive, setDragActive] = useState(false)
-  const [selectedFile, setSelectedFile] = useState<File | null>(null)
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([])
 
   const validateFile = (file: File): string | null => {
     if (file.size > MAX_FILE_SIZE) {
@@ -60,33 +60,56 @@ export function UploadForm({ onUpload, isUploading }: UploadFormProps) {
     return null
   }
 
-  const handleFileSelect = (file: File) => {
-    setError(null)
+  const validateFiles = (files: File[]): string | null => {
+    for (const file of files) {
+      const fileError = validateFile(file)
+      if (fileError) {
+        return `${file.name}: ${fileError}`
+      }
+    }
 
-    const validationError = validateFile(file)
+    const totalSize = files.reduce((sum, file) => sum + file.size, 0)
+    if (totalSize > MAX_FILE_SIZE * 5) { // Allow up to 25MB total for multiple files
+      return `Total file size exceeds 25MB limit. Current size: ${(totalSize / 1024 / 1024).toFixed(1)}MB`
+    }
+
+    return null
+  }
+
+  const handleFilesSelect = (files: FileList | File[]) => {
+    setError(null)
+    const fileArray = Array.from(files)
+
+    const validationError = validateFiles(fileArray)
     if (validationError) {
       setError(validationError)
       return
     }
 
-    setSelectedFile(file)
+    setSelectedFiles(fileArray)
   }
 
   const handleUpload = () => {
-    if (selectedFile) {
-      onUpload(selectedFile)
+    if (selectedFiles.length > 0) {
+      onUpload(selectedFiles)
     }
   }
 
-  const handleRemoveFile = () => {
-    setSelectedFile(null)
+  const handleRemoveFile = (index: number) => {
+    const newFiles = selectedFiles.filter((_, i) => i !== index)
+    setSelectedFiles(newFiles)
+    setError(null)
+  }
+
+  const handleClearAll = () => {
+    setSelectedFiles([])
     setError(null)
   }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (file) {
-      handleFileSelect(file)
+    const files = e.target.files
+    if (files && files.length > 0) {
+      handleFilesSelect(files)
     }
   }
 
@@ -94,9 +117,9 @@ export function UploadForm({ onUpload, isUploading }: UploadFormProps) {
     e.preventDefault()
     setDragActive(false)
 
-    const file = e.dataTransfer.files[0]
-    if (file) {
-      handleFileSelect(file)
+    const files = e.dataTransfer.files
+    if (files && files.length > 0) {
+      handleFilesSelect(files)
     }
   }
 
@@ -117,6 +140,8 @@ export function UploadForm({ onUpload, isUploading }: UploadFormProps) {
     const i = Math.floor(Math.log(bytes) / Math.log(k))
     return Number.parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i]
   }
+
+  const formatTotalFileSize = (bytes: number) => formatFileSize(bytes)
 
   return (
     <div className="w-full max-w-4xl mx-auto space-y-8">
@@ -149,14 +174,14 @@ export function UploadForm({ onUpload, isUploading }: UploadFormProps) {
         <CardHeader className="text-center pb-4">
           <CardTitle className="flex items-center justify-center gap-2 text-lg font-medium">
             <FileText className="h-4 w-4 text-gray-600" />
-            Upload Your Data File
+            Upload Your Data Files
           </CardTitle>
           <CardDescription className="text-sm text-gray-600">
-            Upload your business data and get comprehensive analytics in seconds
+            Upload one or more files and get comprehensive analytics in seconds
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
-          {!selectedFile ? (
+          {selectedFiles.length === 0 ? (
             /* Upload Area */
             <div
               className={cn(
@@ -186,7 +211,7 @@ export function UploadForm({ onUpload, isUploading }: UploadFormProps) {
 
                 <div className="space-y-2">
                   <h3 className="text-xl font-semibold text-gray-900">
-                    {dragActive ? "Drop your file here" : "Drag & drop your file here"}
+                    {dragActive ? "Drop your files here" : "Drag & drop your files here"}
                   </h3>
                   <p className="text-gray-600">or click to browse from your computer</p>
                 </div>
@@ -199,7 +224,7 @@ export function UploadForm({ onUpload, isUploading }: UploadFormProps) {
                     <Badge variant="secondary" className="text-sm py-1 px-3 bg-secondary/70">PDF</Badge>
                   </div>
                   {/* File size limit - subtle */}
-                  <p className="text-xs text-gray-500">Maximum file size: 5MB</p>
+                  <p className="text-xs text-gray-500">Maximum 5MB per file • Up to 25MB total</p>
                 </div>
               </div>
 
@@ -210,6 +235,7 @@ export function UploadForm({ onUpload, isUploading }: UploadFormProps) {
                 onChange={handleInputChange}
                 disabled={isUploading}
                 className="hidden"
+                multiple
               />
 
               <Button
@@ -219,68 +245,83 @@ export function UploadForm({ onUpload, isUploading }: UploadFormProps) {
                 disabled={isUploading}
               >
                 <Label htmlFor="file-upload" className="cursor-pointer">
-                  Select File
+                  Select Files
                 </Label>
               </Button>
             </div>
           ) : (
-            /* Selected File Display - Enhanced with better visual feedback */
+            /* Selected Files Display */
             <div className="space-y-4 animate-in fade-in-0 duration-500">
-              <div className="flex items-center justify-between p-5 bg-gray-50/80 rounded-lg border transition-colors hover:bg-gray-100/80">
-                <div className="flex items-center gap-4">
-                  <div className="p-3 bg-blue-100 rounded-lg">
-                    <File className="h-6 w-6 text-blue-600" />
-                  </div>
-                  <div>
-                    <p className="font-medium text-gray-900">{selectedFile.name}</p>
-                    <div className="flex items-center gap-2 text-sm text-gray-600 mt-0.5">
-                      <span>{formatFileSize(selectedFile.size)}</span>
-                      <span>•</span>
-                      <Badge variant="secondary" className="text-xs bg-secondary/50">
-                        {FILE_TYPE_LABELS[selectedFile.type as keyof typeof FILE_TYPE_LABELS] || "Unknown"}
-                      </Badge>
+              <div className="space-y-2">
+                {selectedFiles.map((file, index) => (
+                  <div
+                    key={`${file.name}-${index}`}
+                    className="flex items-center justify-between p-4 bg-gray-50/80 rounded-lg border transition-colors hover:bg-gray-100/80"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-blue-100 rounded-lg">
+                        <File className="h-5 w-5 text-blue-600" />
+                      </div>
+                      <div>
+                        <p className="font-medium text-gray-900 text-sm">{file.name}</p>
+                        <div className="flex items-center gap-2 text-xs text-gray-600 mt-0.5">
+                          <span>{formatFileSize(file.size)}</span>
+                          <span>•</span>
+                          <Badge variant="secondary" className="text-xs bg-secondary/50">
+                            {FILE_TYPE_LABELS[file.type as keyof typeof FILE_TYPE_LABELS] || "Unknown"}
+                          </Badge>
+                        </div>
+                      </div>
                     </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleRemoveFile(index)}
+                      disabled={isUploading}
+                      className="hover:bg-gray-200/80"
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
                   </div>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleRemoveFile}
-                  disabled={isUploading}
-                  className="hover:bg-gray-200/80"
-                >
-                  <X className="h-4 w-4" />
-                </Button>
+                ))}
               </div>
 
-              <div className="flex gap-3">
-                <Button
-                  onClick={handleUpload}
-                  disabled={isUploading}
-                  className="flex-1 transition-all hover:scale-[1.02]"
-                  size="lg"
-                >
-                  {isUploading ? (
-                    <>
-                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2" />
-                      Generating Analytics...
-                    </>
-                  ) : (
-                    <>
-                      <BarChart3 className="h-5 w-5 mr-2" />
-                      Generate Analytics
-                    </>
-                  )}
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={handleRemoveFile}
-                  disabled={isUploading}
-                  size="lg"
-                  className="hover:bg-gray-100/80"
-                >
-                  Cancel
-                </Button>
+              <div className="flex items-center justify-between pt-3 border-t">
+                <div className="text-sm text-gray-600">
+                  {selectedFiles.length} file{selectedFiles.length > 1 ? 's' : ''} selected
+                  <span className="ml-2">
+                    ({formatTotalFileSize(selectedFiles.reduce((sum, f) => sum + f.size, 0))})
+                  </span>
+                </div>
+                <div className="flex gap-3">
+                  <Button
+                    onClick={handleUpload}
+                    disabled={isUploading}
+                    className="transition-all hover:scale-[1.02]"
+                    size="lg"
+                  >
+                    {isUploading ? (
+                      <>
+                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2" />
+                        Generating Analytics...
+                      </>
+                    ) : (
+                      <>
+                        <BarChart3 className="h-5 w-5 mr-2" />
+                        Generate Analytics
+                      </>
+                    )}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={handleClearAll}
+                    disabled={isUploading}
+                    size="lg"
+                    className="hover:bg-gray-100/80"
+                  >
+                    Clear All
+                  </Button>
+                </div>
               </div>
             </div>
           )}
@@ -303,7 +344,7 @@ export function UploadForm({ onUpload, isUploading }: UploadFormProps) {
             </div>
           </div>
           <h3 className="font-semibold mb-1.5">1. Upload</h3>
-          <p className="text-sm text-gray-600">Upload your CSV, Excel, or PDF file</p>
+          <p className="text-sm text-gray-600">Upload your CSV, Excel, or PDF files</p>
         </Card>
 
         <Card className="text-center p-5 transition-all duration-300 hover:shadow-md hover:scale-[1.02]">

@@ -21,9 +21,11 @@ async function fetchWithError(url: string, options?: RequestInit): Promise<Respo
   return response
 }
 
-export async function uploadFile(file: File): Promise<UploadResponse> {
+export async function uploadFiles(files: File[]): Promise<UploadResponse> {
   const formData = new FormData()
-  formData.append('file', file)
+  files.forEach(file => {
+    formData.append('files', file)
+  })
 
   const response = await fetchWithError(`${API_BASE_URL}/upload`, {
     method: 'POST',
