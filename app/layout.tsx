@@ -13,7 +13,6 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Auto Analyst",
   description: "Advanced AI analytics dashboard for document analysis and insights",
 };
 
