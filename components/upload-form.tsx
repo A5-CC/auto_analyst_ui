@@ -148,7 +148,6 @@ export function UploadForm({ onUpload, isUploading }: UploadFormProps) {
       {/* Header Section - Enterprise style */}
       <div className="text-center space-y-4">
         <div>
-          <h1 className="text-2xl font-medium text-gray-900">Auto Analyst</h1>
           <p className="text-gray-600 mt-1.5">Transform your business data into actionable insights</p>
         </div>
 
