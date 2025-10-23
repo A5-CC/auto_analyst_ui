@@ -15,8 +15,6 @@ function AuthGate({ children }: { children: ReactNode }) {
     }
   }, [authenticated, pathname, router]);
 
-  // Show navbar only if logged in
-  const showNavbar = authenticated;
 
   // Show login page if not authenticated
   if (!authenticated && pathname === "/login") return <>{children}</>;
