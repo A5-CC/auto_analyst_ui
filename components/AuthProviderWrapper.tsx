@@ -3,7 +3,6 @@
 import { ReactNode, useEffect } from "react";
 import { AuthProvider, useAuth } from "./AuthContext";
 import { usePathname, useRouter } from "next/navigation";
-import { SiteNavbar } from "./site-navbar";
 
 function AuthGate({ children }: { children: ReactNode }) {
   const { authenticated } = useAuth();
@@ -24,7 +23,6 @@ function AuthGate({ children }: { children: ReactNode }) {
 
   return (
     <>
-      {showNavbar && <SiteNavbar />}
       {children}
     </>
   );
