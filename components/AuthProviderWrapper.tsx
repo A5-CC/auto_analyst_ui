@@ -1,5 +1,3 @@
-'use client';
-
 import { ReactNode, useEffect } from "react";
 import { AuthProvider, useAuth } from "./AuthContext";
 import { usePathname, useRouter } from "next/navigation";
@@ -15,15 +13,10 @@ function AuthGate({ children }: { children: ReactNode }) {
     }
   }, [authenticated, pathname, router]);
 
-
   // Show login page if not authenticated
   if (!authenticated && pathname === "/login") return <>{children}</>;
 
-  return (
-    <>
-      {children}
-    </>
-  );
+  return <>{children}</>;
 }
 
 export function AuthProviderWrapper({ children }: { children: ReactNode }) {
