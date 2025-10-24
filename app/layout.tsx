@@ -1,6 +1,5 @@
 import "./globals.css";
 import { AuthProviderWrapper } from "@/components/AuthProviderWrapper";
-import { SiteNavbar } from "@/components/site-navbar"; // if you have a navbar
 import { Roboto } from "next/font/google";
 
 const robotoLight = Roboto({
@@ -10,14 +9,10 @@ const robotoLight = Roboto({
 });
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  const pathname = typeof window !== "undefined" ? window.location.pathname : "";
-  const hideNavbar = pathname === "/login";
-
   return (
     <html lang="en">
       <body className={`${robotoLight.variable} font-sans antialiased`}>
         <AuthProviderWrapper>
-          {!hideNavbar && <SiteNavbar />}
           {children}
         </AuthProviderWrapper>
       </body>

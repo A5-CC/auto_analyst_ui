@@ -1,3 +1,5 @@
+"use client"; // ⚠️ Required because we use useEffect and useRouter
+
 import { ReactNode, useEffect } from "react";
 import { AuthProvider, useAuth } from "./AuthContext";
 import { usePathname, useRouter } from "next/navigation";
