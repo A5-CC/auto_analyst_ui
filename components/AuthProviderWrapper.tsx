@@ -1,23 +1,30 @@
-"use client"; // ⚠️ Required because we use useEffect and useRouter
+"use client";
 
-import { ReactNode, useEffect } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { AuthProvider, useAuth } from "./AuthContext";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 function AuthGate({ children }: { children: ReactNode }) {
   const { authenticated } = useAuth();
-  const pathname = usePathname();
   const router = useRouter();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!authenticated && pathname !== "/login") {
+    // Wait until we know if user is authenticated
+    setLoading(false);
+
+    if (!authenticated) {
       router.push("/login");
     }
-  }, [authenticated, pathname, router]);
+  }, [authenticated, router]);
 
-  // Show login page if not authenticated
-  if (!authenticated && pathname === "/login") return <>{children}</>;
+  // While checking auth state, show nothing
+  if (loading) return null;
 
+  // If not authenticated, the redirect is happening
+  if (!authenticated) return null;
+
+  // Authenticated → show children
   return <>{children}</>;
 }
 
