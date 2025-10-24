@@ -1,30 +1,34 @@
-"use client";
+'use client';
 
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useEffect } from "react";
 import { AuthProvider, useAuth } from "./AuthContext";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 function AuthGate({ children }: { children: ReactNode }) {
-  const { authenticated } = useAuth();
+  const { authenticated, initialized } = useAuth();
+  const pathname = usePathname();
   const router = useRouter();
-  const [loading, setLoading] = useState(true);
 
+  // Only attempt redirect after we know the auth state (initialized === true)
   useEffect(() => {
-    // Wait until we know if user is authenticated
-    setLoading(false);
-
-    if (!authenticated) {
+    if (!initialized) return;               // wait for initial check
+    if (!authenticated && pathname !== "/login") {
       router.push("/login");
     }
-  }, [authenticated, router]);
+    // If authenticated and on /login you might want to redirect away — optional:
+    // if (initialized && authenticated && pathname === "/login") router.push("/");
+  }, [initialized, authenticated, pathname, router]);
 
-  // While checking auth state, show nothing
-  if (loading) return null;
+  // Always render the login page so user can sign in immediately
+  if (pathname === "/login") return <>{children}</>;
 
-  // If not authenticated, the redirect is happening
+  // If still initializing, render nothing (avoid flicker)
+  if (!initialized) return null;
+
+  // If initialized and not authenticated, we've triggered redirect; don't render protected content
   if (!authenticated) return null;
 
-  // Authenticated → show children
+  // Authenticated -> render children
   return <>{children}</>;
 }
 

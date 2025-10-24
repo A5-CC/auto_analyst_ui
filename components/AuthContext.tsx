@@ -4,6 +4,7 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 
 type AuthContextType = {
   authenticated: boolean;
+  initialized: boolean;            // NEW: tells consumers when initial check finished
   login: (username: string, password: string) => boolean;
   logout: () => void;
 };
@@ -12,10 +13,13 @@ const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [authenticated, setAuthenticated] = useState(false);
+  const [initialized, setInitialized] = useState(false);
 
   useEffect(() => {
+    // read sessionStorage synchronously in effect, then mark initialized
     const loggedIn = sessionStorage.getItem('loggedIn');
     if (loggedIn === 'true') setAuthenticated(true);
+    setInitialized(true);
   }, []);
 
   const login = (username: string, password: string) => {
@@ -36,7 +40,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ authenticated, login, logout }}>
+    <AuthContext.Provider value={{ authenticated, initialized, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
