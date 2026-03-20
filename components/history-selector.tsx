@@ -27,12 +27,6 @@ export function HistorySelector({ history, onSelect, isLoading, mode = 'default'
           <History className="h-5 w-5" />
           {mode === 'timeout' ? 'Check Results Later' : 'Previous Analytics'}
         </CardTitle>
-        <CardDescription>
-          {mode === 'timeout'
-            ? 'Your analysis will appear here once completed'
-            : 'View insights from previously uploaded files'
-          }
-        </CardDescription>
       </CardHeader>
       <CardContent>
         <div className="relative">

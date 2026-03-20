@@ -175,9 +175,6 @@ export function UploadForm({ onUpload, isUploading }: UploadFormProps) {
             <FileText className="h-4 w-4 text-gray-600" />
             Upload Your Data Files
           </CardTitle>
-          <CardDescription className="text-sm text-gray-600">
-            Upload one or more files and get comprehensive analytics in seconds
-          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           {selectedFiles.length === 0 ? (

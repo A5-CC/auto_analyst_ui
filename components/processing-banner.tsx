@@ -17,9 +17,6 @@ export function ProcessingBanner({ fileName, onCancel }: ProcessingBannerProps) 
           <Loader2 className="h-6 w-6 animate-spin" />
           Processing Your File
         </CardTitle>
-        <CardDescription>
-          Analyzing {fileName} and generating insights...
-        </CardDescription>
       </CardHeader>
       <CardContent className="text-center">
         <div className="space-y-4">
@@ -30,13 +27,6 @@ export function ProcessingBanner({ fileName, onCancel }: ProcessingBannerProps) 
               <div className="w-2 h-2 bg-primary rounded-full animate-bounce"></div>
             </div>
             <span>This may take a few moments</span>
-          </div>
-
-          <div className="text-xs text-gray-500 space-y-1">
-            <p>• Extracting data from your file</p>
-            <p>• Analyzing patterns and trends</p>
-            <p>• Generating KPIs and insights</p>
-            <p>• Creating visualizations</p>
           </div>
 
           <Button
