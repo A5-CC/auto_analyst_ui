@@ -43,6 +43,7 @@ const sheetVariants = {
 interface SheetContentProps
   extends React.ComponentPropsWithoutRef<typeof SheetPrimitive.Content> {
   side?: keyof typeof sheetVariants.side
+  children?: React.ReactNode
 }
 
 const SheetContent = React.forwardRef<
