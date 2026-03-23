@@ -44,6 +44,7 @@ interface SheetContentProps
   extends React.ComponentPropsWithoutRef<typeof SheetPrimitive.Content> {
   side?: keyof typeof sheetVariants.side
   children?: React.ReactNode
+  className?: string
 }
 
 const SheetContent = React.forwardRef<
