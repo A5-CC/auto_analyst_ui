@@ -34,7 +34,7 @@ export function Footer({ dashboardData, history = [], onHistorySelect, mode }: F
     })
   }
 
-  const shouldShowHistoryNav = mode !== 'upload' && history.length > 0
+  const shouldShowHistoryNav = mode !== 'uploading' && history.length > 0
 
   return (
     <footer className="bg-white border-t border-gray-100 mt-auto">
