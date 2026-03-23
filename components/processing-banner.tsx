@@ -1,7 +1,7 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Loader2, X } from "lucide-react"
 
 interface ProcessingBannerProps {
@@ -20,6 +20,9 @@ export function ProcessingBanner({ fileName, onCancel }: ProcessingBannerProps) 
       </CardHeader>
       <CardContent className="text-center">
         <div className="space-y-4">
+          <p className="text-sm text-gray-600 truncate" title={fileName}>
+            Processing: <span className="font-medium text-gray-800">{fileName}</span>
+          </p>
           <div className="flex items-center justify-center gap-2 text-sm text-gray-600">
             <div className="flex space-x-1">
               <div className="w-2 h-2 bg-primary rounded-full animate-bounce [animation-delay:-0.3s]"></div>
