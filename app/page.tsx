@@ -17,6 +17,7 @@ export default function Page() {
   const [summary, setSummary] = useState<DashboardData | null>(null)
   const [history, setHistory] = useState<DocMeta[]>([])
   const [currentFileName, setCurrentFileName] = useState<string>('')
+  const [processingError, setProcessingError] = useState<string | null>(null)
 
   // Load history on mount
   useEffect(() => {
@@ -55,6 +56,7 @@ export default function Page() {
           const errorMessage = status.error_message || status.error || 'Unknown processing error'
           // Log as a non-blocking warning
           console.warn(`Processing failed (backend):`, errorMessage)
+          setProcessingError(errorMessage)
           setMode('error')
         }
       } catch (err) {
@@ -84,6 +86,7 @@ export default function Page() {
 
   const handleUpload = async (files: File[]) => {
     setMode('uploading')
+    setProcessingError(null)
     const combinedName = files.map(f => f.name).join(' + ')
     setCurrentFileName(combinedName)
 
@@ -93,6 +96,7 @@ export default function Page() {
       setMode('processing')
     } catch (err) {
       console.error('Upload failed:', err)
+      setProcessingError(err instanceof Error ? err.message : 'Upload failed')
       setMode('error')
     }
   }
@@ -106,6 +110,7 @@ export default function Page() {
       setMode('done')
     } catch (err) {
       console.error('Failed to load summary:', err)
+      setProcessingError(err instanceof Error ? err.message : 'Failed to load summary')
       setMode('error')
     }
   }
@@ -114,6 +119,7 @@ export default function Page() {
     setMode('idle')
     setJobId(null)
     setCurrentFileName('')
+    setProcessingError(null)
   }
 
   const handleReset = () => {
@@ -121,6 +127,7 @@ export default function Page() {
     setJobId(null)
     setSummary(null)
     setCurrentFileName('')
+    setProcessingError(null)
   }
 
   return (
@@ -129,6 +136,7 @@ export default function Page() {
       summary={summary}
       history={history}
       currentFileName={currentFileName}
+      errorMessage={processingError}
       onUpload={handleUpload}
       onHistorySelect={handleHistorySelect}
       onCancel={handleCancel}

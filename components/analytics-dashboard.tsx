@@ -21,6 +21,7 @@ interface AnalyticsDashboardProps {
   summary: DashboardData | null
   history: DocMeta[]
   currentFileName: string
+  errorMessage?: string | null
   onUpload: (files: File[]) => Promise<void>
   onHistorySelect: (docId: string) => Promise<void>
   onCancel: () => void
@@ -32,11 +33,14 @@ export default function AnalyticsDashboard({
   summary,
   history,
   currentFileName,
+  errorMessage,
   onUpload,
   onHistorySelect,
   onCancel,
   onReset
 }: AnalyticsDashboardProps) {
+  const isMissingOpenpyxl = Boolean(errorMessage?.toLowerCase().includes('openpyxl'))
+
   const renderContent = () => {
     switch (mode) {
       case 'idle':
@@ -116,8 +120,15 @@ export default function AnalyticsDashboard({
                 <div className="flex flex-col items-center space-y-4">
                   <h3 className="text-lg font-medium text-gray-700">Processing Issue</h3>
                   <div className="text-gray-600 text-center">
-                    An error occurred while processing your files. Please try again.
+                    {isMissingOpenpyxl
+                      ? 'The backend is missing the Excel parser dependency (`openpyxl`). Upload CSV/PDF for now, or install `openpyxl` on the backend.'
+                      : 'An error occurred while processing your files. Please try again.'}
                   </div>
+                  {errorMessage && (
+                    <div className="w-full rounded-md border bg-gray-50 p-3 text-sm text-gray-700 break-words">
+                      {errorMessage}
+                    </div>
+                  )}
                   <Button
                     variant="outline"
                     onClick={onReset}
